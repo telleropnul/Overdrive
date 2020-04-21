@@ -16,5 +16,3 @@ Now your bevel is visible for the entire duration of that task.
 When in 3D viewport, press [F3].  Search for “Overdrive” and select to run.
 Press [RMB] or [ESC] to exit Overdrive.
 
-## Important information ##
-
