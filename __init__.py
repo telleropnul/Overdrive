@@ -42,7 +42,7 @@ class OD_OT_timer(bpy.types.Operator):
             self.cancel(context)
             return {'CANCELLED'}
 
-        print(event.type + ' / ' + event.value + ' / ' + str(time.perf_counter() - self._time))
+        print(f"{event.type} / {event.value} / {(time.perf_counter() - self._time):.0f} / {self._moves}")
         
         if bpy.context.space_data.shading.type == 'SOLID':
         
@@ -54,28 +54,33 @@ class OD_OT_timer(bpy.types.Operator):
                 self._middle_mouse_lock= False
             
             if event.type == 'MOUSEMOVE':
-                self.mouse_xy=(event.mouse_x, event.mouse_y)
-                for obj in bpy.context.scene.objects:
-                    for mod in reversed(obj.modifiers):
-                        if mod.type == "BEVEL":
-                            mod.show_viewport = False
-                            break
-
-            if event.type == 'MOUSEMOVE':
-                # restart 'seconds at rest' counter
+                # show last bevel mod (mouse movement delayed)
+                if self._moves > 100:               
+                    for obj in bpy.context.scene.objects:
+                        for mod in reversed(obj.modifiers):
+                            if mod.type == "BEVEL":
+                                mod.show_viewport = False
+                                break
+                # update counters
+                # reset 'seconds at rest' counter
                 self._time = time.perf_counter()
                 # increment 'number of mouse moves' counter
                 self._moves += 1
 
+
             if event.type == 'TIMER' \
                 and time.perf_counter() - self._time > 2 \
-                and not self._middle_mouse_lock \
-                and self._moves > 10:
-                
+                and not self._middle_mouse_lock:
+
+                # reset 'number of mouse moves' counter 
+                self._moves = 0            
+
+                # edit mode exclude
                 if bpy.context.active_object:
                     if bpy.context.active_object.mode == 'EDIT':
                         return {'PASS_THROUGH'}
 
+                # hide last bevel mod
                 for obj in bpy.context.scene.objects:
                     for mod in reversed(obj.modifiers):
                         if mod.type == "BEVEL":
