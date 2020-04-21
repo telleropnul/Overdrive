@@ -1,7 +1,7 @@
 # Overdrive
 
 ## What is Overdrive ##
-Overdrive is a non-invasive Blender add-on offering the following performance enhancements:
+Overdrive is a non-intrusive Blender add-on offering the following performance enhancements:
 
 Automatically show / hide the last bevel modifier on the modifier stack for all objects in the scene based on mouse inactivity.
 
