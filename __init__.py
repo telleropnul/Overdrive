@@ -55,7 +55,7 @@ class OD_OT_timer(bpy.types.Operator):
             
             if event.type == 'MOUSEMOVE':
                 # show last bevel mod (mouse movement delayed)
-                if self._moves > 100:               
+                if self._moves > 25:               
                     for obj in bpy.context.scene.objects:
                         for mod in reversed(obj.modifiers):
                             if mod.type == "BEVEL":
@@ -69,7 +69,7 @@ class OD_OT_timer(bpy.types.Operator):
 
 
             if event.type == 'TIMER' \
-                and time.perf_counter() - self._time > 2 \
+                and time.perf_counter() - self._time > 1 \
                 and not self._middle_mouse_lock:
 
                 # reset 'number of mouse moves' counter 
