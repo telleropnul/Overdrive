@@ -1,5 +1,7 @@
 import bpy
 import time
+from .. import utils
+
 
 class OD_OT_timer(bpy.types.Operator):
     """Operator which runs its self from a timer"""
@@ -12,10 +14,6 @@ class OD_OT_timer(bpy.types.Operator):
     _time = None
     _middle_mouse_lock = None
     
-    @classmethod
-    def is_running(cls, context):
-        return (cls._timer)
- 
     def modal(self, context, event):
         if event.type in {'RIGHTMOUSE', 'ESC'}:
             self.cancel(context)
@@ -75,6 +73,11 @@ class OD_OT_timer(bpy.types.Operator):
         self._moves = 0
         self._middle_mouse_lock = False
         
+        # set is_running property
+        prefs = utils.common.prefs()
+        prefs.is_running = True
+        # force screen refresh.  triggers panel's def popover() and refreshes icons.
+        bpy.context.view_layer.update()
 
         wm = context.window_manager
         self._timer = wm.event_timer_add(1, window=context.window)
@@ -84,3 +87,8 @@ class OD_OT_timer(bpy.types.Operator):
     def cancel(self, context):
         wm = context.window_manager
         wm.event_timer_remove(self._timer)
+        # set is_running property
+        prefs = utils.common.prefs()
+        prefs.is_running = False
+        # force screen refresh.  triggers panel's def popover() and refreshes icons.
+        bpy.context.view_layer.update()

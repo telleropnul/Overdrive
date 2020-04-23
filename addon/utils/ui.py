@@ -5,20 +5,14 @@ from .. import icons
 
 def get_icon():
     if utils.common.prefs().high_contrast_icons:
-        if bpy.data.is_saved:
-            if bpy.data.is_dirty:
-                icon = 'mixed'
-            else:
-                icon = 'white'
+        if utils.common.prefs().is_running:
+            icon = 'white'
         else:
             icon = 'black'
 
     else:
-        if bpy.data.is_saved:
-            if bpy.data.is_dirty:
-                icon = 'gray'
-            else:
-                icon = 'green'
+        if utils.common.prefs().is_running:
+            icon = 'green'
         else:
             icon = 'red'
 
