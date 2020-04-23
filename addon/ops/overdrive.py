@@ -12,6 +12,9 @@ class OD_OT_timer(bpy.types.Operator):
     _time = None
     _middle_mouse_lock = None
     
+    @classmethod
+    def is_running(cls, context):
+        return (cls._timer)
  
     def modal(self, context, event):
         if event.type in {'RIGHTMOUSE', 'ESC'}:
@@ -20,49 +23,50 @@ class OD_OT_timer(bpy.types.Operator):
 
         print(f"{event.type} / {event.value} / {(time.perf_counter() - self._time):.0f} / {self._moves}")
         
-        if bpy.context.space_data.shading.type == 'SOLID':
+        if hasattr(bpy.context.space_data, 'shading'):
+            if bpy.context.space_data.shading.type == 'SOLID':
         
-            if event.type == 'MIDDLEMOUSE' and event.value == 'PRESS':
-                self._middle_mouse_lock= True
-                print ('\n=\n==\n===\nMIDDLE MOUSE PRESS ACTIVE\n===\n==\n=\n')
-            
-            if event.type == 'MOUSEMOVE' and event.value == 'RELEASE':
-                self._middle_mouse_lock= False
-            
-            if event.type == 'MOUSEMOVE':
-                # show last bevel mod (mouse movement delayed)
-                if self._moves > 25:               
+                if event.type == 'MIDDLEMOUSE' and event.value == 'PRESS':
+                    self._middle_mouse_lock= True
+                    print ('\n=\n==\n===\nMIDDLE MOUSE PRESS ACTIVE\n===\n==\n=\n')
+                
+                if event.type == 'MOUSEMOVE' and event.value == 'RELEASE':
+                    self._middle_mouse_lock= False
+                
+                if event.type == 'MOUSEMOVE':
+                    # show last bevel mod (mouse movement delayed)
+                    if self._moves > 25:               
+                        for obj in bpy.context.scene.objects:
+                            for mod in reversed(obj.modifiers):
+                                if mod.type == "BEVEL":
+                                    mod.show_viewport = False
+                                    break
+                    # update counters
+                    # reset 'seconds at rest' counter
+                    self._time = time.perf_counter()
+                    # increment 'number of mouse moves' counter
+                    self._moves += 1
+
+
+                if event.type == 'TIMER' \
+                    and time.perf_counter() - self._time > 1 \
+                    and not self._middle_mouse_lock:
+
+                    # reset 'number of mouse moves' counter 
+                    self._moves = 0            
+
+                    # edit mode exclude
+                    if bpy.context.active_object:
+                        if bpy.context.active_object.mode == 'EDIT':
+                            return {'PASS_THROUGH'}
+
+                    # hide last bevel mod
                     for obj in bpy.context.scene.objects:
                         for mod in reversed(obj.modifiers):
                             if mod.type == "BEVEL":
-                                mod.show_viewport = False
+                                mod.show_viewport = True
                                 break
-                # update counters
-                # reset 'seconds at rest' counter
-                self._time = time.perf_counter()
-                # increment 'number of mouse moves' counter
-                self._moves += 1
-
-
-            if event.type == 'TIMER' \
-                and time.perf_counter() - self._time > 1 \
-                and not self._middle_mouse_lock:
-
-                # reset 'number of mouse moves' counter 
-                self._moves = 0            
-
-                # edit mode exclude
-                if bpy.context.active_object:
-                    if bpy.context.active_object.mode == 'EDIT':
-                        return {'PASS_THROUGH'}
-
-                # hide last bevel mod
-                for obj in bpy.context.scene.objects:
-                    for mod in reversed(obj.modifiers):
-                        if mod.type == "BEVEL":
-                            mod.show_viewport = True
-                            break
-                    
+                        
         return {'PASS_THROUGH'}
  
     def execute(self, context):
