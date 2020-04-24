@@ -35,9 +35,9 @@ class OD_OT_timer(bpy.types.Operator):
                 if event.type == 'MOUSEMOVE':
                     # hide last bevel mod (mouse movement delayed)
                     if self._moves > 25:
-                        if self._prefs.show_face_orientation:
+                        if self._prefs.od_show_face_orientation:
                             bpy.context.space_data.overlay.show_face_orientation = True
-                        if self._prefs.show_wireframes:
+                        if self._prefs.od_show_wireframes:
                             bpy.context.space_data.overlay.show_wireframes = True
                         for obj in bpy.context.scene.objects:
                             if 'Cutters' in bpy.data.collections:
@@ -55,7 +55,7 @@ class OD_OT_timer(bpy.types.Operator):
 
 
                 if event.type == 'TIMER' \
-                    and time.perf_counter() - self._time > self._prefs.overdrive_interval \
+                    and time.perf_counter() - self._time > self._prefs.od_interval \
                     and not self._middle_mouse_lock:
 
                     # reset 'number of mouse moves' counter 
@@ -86,7 +86,7 @@ class OD_OT_timer(bpy.types.Operator):
         
         # set is_running property
         self._prefs = utils.common.prefs()
-        self._prefs.is_running = True
+        self._prefs.od_is_running = True
         # force screen refresh.  triggers panel's def popover() and refreshes icons.
         #bpy.context.view_layer.update()
         if hasattr(bpy.context.area, 'tag_redraw'):
@@ -101,7 +101,7 @@ class OD_OT_timer(bpy.types.Operator):
         wm = context.window_manager
         wm.event_timer_remove(self._timer)
         # set is_running property
-        self._prefs.is_running = False
+        self._prefs.od_is_running = False
         # force screen refresh.  triggers panel's def popover() and refreshes icons.
         #bpy.context.view_layer.update()
         if hasattr(bpy.context.area, 'tag_redraw'):

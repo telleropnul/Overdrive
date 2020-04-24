@@ -4,14 +4,14 @@ from .. import icons
 
 
 def get_icon():
-    if utils.common.prefs().high_contrast_icons:
-        if utils.common.prefs().is_running:
+    if utils.common.prefs().od_high_contrast_icons:
+        if utils.common.prefs().od_is_running:
             icon = 'white'
         else:
             icon = 'black'
 
     else:
-        if utils.common.prefs().is_running:
+        if utils.common.prefs().od_is_running:
             icon = 'green'
         else:
             icon = 'red'

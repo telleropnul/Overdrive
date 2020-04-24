@@ -22,9 +22,9 @@ class OverdrivePanel(bpy.types.Panel):
 
         box = col.box().column()
         box.operator('overdrive.overdrive')
-        box.prop(prefs, 'overdrive_interval')
-        box.prop(prefs, 'show_face_orientation')
-        box.prop(prefs, 'show_wireframes')
+        box.prop(prefs, 'od_interval')
+        box.prop(prefs, 'od_show_face_orientation')
+        box.prop(prefs, 'od_show_wireframes')
 
 		
 def popover(self, context):
