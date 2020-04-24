@@ -88,7 +88,8 @@ class OD_OT_timer(bpy.types.Operator):
         self._prefs = utils.common.prefs()
         self._prefs.is_running = True
         # force screen refresh.  triggers panel's def popover() and refreshes icons.
-        bpy.context.view_layer.update()
+        #bpy.context.view_layer.update()
+        bpy.context.area.tag_redraw()
 
         wm = context.window_manager
         self._timer = wm.event_timer_add(1, window=context.window)
@@ -101,4 +102,5 @@ class OD_OT_timer(bpy.types.Operator):
         # set is_running property
         self._prefs.is_running = False
         # force screen refresh.  triggers panel's def popover() and refreshes icons.
-        bpy.context.view_layer.update()
+        #bpy.context.view_layer.update()
+        bpy.context.area.tag_redraw()
