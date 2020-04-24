@@ -9,6 +9,7 @@ class OD_OT_timer(bpy.types.Operator):
     bl_label = "Overdrive"
     bl_description = '\n Auto hide/show last bevel modifier in 3D viewport based on mouse activity'
  
+    _prefs = None
     _timer = None
     _moves = None
     _time = None
@@ -32,13 +33,19 @@ class OD_OT_timer(bpy.types.Operator):
                     self._middle_mouse_lock= False
                 
                 if event.type == 'MOUSEMOVE':
-                    # show last bevel mod (mouse movement delayed)
-                    if self._moves > 25:               
+                    # hide last bevel mod (mouse movement delayed)
+                    if self._moves > 25:
+                        if self._prefs.show_face_orientation:
+                            bpy.context.space_data.overlay.show_face_orientation = True
+                        if self._prefs.show_wireframes:
+                            bpy.context.space_data.overlay.show_wireframes = True
                         for obj in bpy.context.scene.objects:
-                            for mod in reversed(obj.modifiers):
-                                if mod.type == "BEVEL":
-                                    mod.show_viewport = False
-                                    break
+                            if obj.name not in bpy.data.collections['Cutters'].objects:
+                                for mod in reversed(obj.modifiers):
+                                    if mod.type == "BEVEL":
+                                        mod.show_viewport = False
+                                        break
+                    
                     # update counters
                     # reset 'seconds at rest' counter
                     self._time = time.perf_counter()
@@ -58,12 +65,14 @@ class OD_OT_timer(bpy.types.Operator):
                         if bpy.context.active_object.mode == 'EDIT':
                             return {'PASS_THROUGH'}
 
-                    # hide last bevel mod
+                    # show last bevel mod
+                    bpy.context.space_data.overlay.show_face_orientation = False
                     for obj in bpy.context.scene.objects:
-                        for mod in reversed(obj.modifiers):
-                            if mod.type == "BEVEL":
-                                mod.show_viewport = True
-                                break
+                        if obj.name not in bpy.data.collections['Cutters'].objects:
+                            for mod in reversed(obj.modifiers):
+                                if mod.type == "BEVEL":
+                                    mod.show_viewport = True
+                                    break
                         
         return {'PASS_THROUGH'}
  
@@ -74,8 +83,8 @@ class OD_OT_timer(bpy.types.Operator):
         self._middle_mouse_lock = False
         
         # set is_running property
-        prefs = utils.common.prefs()
-        prefs.is_running = True
+        self._prefs = utils.common.prefs()
+        self._prefs.is_running = True
         # force screen refresh.  triggers panel's def popover() and refreshes icons.
         bpy.context.view_layer.update()
 
@@ -88,7 +97,6 @@ class OD_OT_timer(bpy.types.Operator):
         wm = context.window_manager
         wm.event_timer_remove(self._timer)
         # set is_running property
-        prefs = utils.common.prefs()
-        prefs.is_running = False
+        self._prefs.is_running = False
         # force screen refresh.  triggers panel's def popover() and refreshes icons.
         bpy.context.view_layer.update()
