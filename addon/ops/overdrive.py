@@ -40,11 +40,12 @@ class OD_OT_timer(bpy.types.Operator):
                         if self._prefs.show_wireframes:
                             bpy.context.space_data.overlay.show_wireframes = True
                         for obj in bpy.context.scene.objects:
-                            if obj.name not in bpy.data.collections['Cutters'].objects:
-                                for mod in reversed(obj.modifiers):
-                                    if mod.type == "BEVEL":
-                                        mod.show_viewport = False
-                                        break
+                            if 'Cutters' in bpy.data.collections:
+                                if obj.name not in bpy.data.collections['Cutters'].objects:
+                                    for mod in reversed(obj.modifiers):
+                                        if mod.type == "BEVEL":
+                                            mod.show_viewport = False
+                                            break
                     
                     # update counters
                     # reset 'seconds at rest' counter
@@ -54,7 +55,7 @@ class OD_OT_timer(bpy.types.Operator):
 
 
                 if event.type == 'TIMER' \
-                    and time.perf_counter() - self._time > 1 \
+                    and time.perf_counter() - self._time > self._prefs.overdrive_interval \
                     and not self._middle_mouse_lock:
 
                     # reset 'number of mouse moves' counter 
@@ -68,11 +69,12 @@ class OD_OT_timer(bpy.types.Operator):
                     # show last bevel mod
                     bpy.context.space_data.overlay.show_face_orientation = False
                     for obj in bpy.context.scene.objects:
-                        if obj.name not in bpy.data.collections['Cutters'].objects:
-                            for mod in reversed(obj.modifiers):
-                                if mod.type == "BEVEL":
-                                    mod.show_viewport = True
-                                    break
+                        if 'Cutters' in bpy.data.collections:
+                            if obj.name not in bpy.data.collections['Cutters'].objects:
+                                for mod in reversed(obj.modifiers):
+                                    if mod.type == "BEVEL":
+                                        mod.show_viewport = True
+                                        break
                         
         return {'PASS_THROUGH'}
  
