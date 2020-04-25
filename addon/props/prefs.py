@@ -40,6 +40,13 @@ class OverdrivePrefs(bpy.types.AddonPreferences):
         default=False,
     )
 
+    od_panel_category: bpy.props.StringProperty(
+        name='Overdrive Panel Category',
+        description='What category to show the Overdrive panel in, leave empty to hide it entirely',
+        default='',
+        update=utils.common.update_panel_category,
+    )
+
     def draw(self, context):
         layout = self.layout
         utils.ui.draw_prop(layout, 'Overdrive Auto Show/Hide Last Bevel Modifier Interval', self, 'od_interval')
@@ -47,3 +54,4 @@ class OverdrivePrefs(bpy.types.AddonPreferences):
         utils.ui.draw_prop(layout, 'Force Show Edges', self, 'od_show_wireframes')
         utils.ui.draw_prop(layout, 'Overdrive High Contrast Icons', self, 'od_high_contrast_icons')
         utils.ui.draw_prop(layout, 'Overdrive Is Running', self, 'od_is_running')
+        utils.ui.draw_prop(layout, 'Panel Category', self, 'od_panel_category')

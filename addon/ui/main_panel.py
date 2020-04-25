@@ -5,7 +5,7 @@ from .. import utils
 class OverdrivePanel(bpy.types.Panel):
     bl_idname = 'OD_PT_OverdrivePanel'
     bl_category = 'Overdrive'
-    bl_label = f'Overdrive {utils.common.version()}'
+    bl_label = 'Overdrive'
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'UI'
 
